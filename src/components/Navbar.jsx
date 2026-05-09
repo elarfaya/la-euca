@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 export default function Navbar() {
   return (
     <header className="border-b border-zinc-800">
@@ -8,9 +10,21 @@ export default function Navbar() {
         </h1>
 
         <nav className="flex gap-4 text-sm text-zinc-400">
-          <a href="#">Inicio</a>
-          <a href="#">Gastos</a>
-          <a href="#">Galería</a>
+
+          <Link
+            to="/"
+            className="hover:text-white transition"
+          >
+            Inicio
+          </Link>
+
+          <Link
+            to="/historial"
+            className="hover:text-white transition"
+          >
+            Historial
+          </Link>
+
         </nav>
 
       </div>

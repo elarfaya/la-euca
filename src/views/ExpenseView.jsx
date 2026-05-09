@@ -15,7 +15,7 @@ export default function ExpensesView() {
         )
     const [participants, setParticipants] = useState([])
     const [currentPayer, setCurrentPayer] = useState("")
-
+    const [paidBy, setPaidBy] = useState("")
     const [name, setName] = useState("")
     const [amount, setAmount] = useState("")
 
@@ -79,11 +79,12 @@ export default function ExpensesView() {
 
         e.preventDefault()
 
-        if (!name || !amount) return
+        if (!name || !amount || !paidBy) return
 
         const newExpense = {
             id: Date.now().toString(),
             name,
+            paid_by: paidBy,
             amount: Number(amount),
             date: new Date().toISOString().split("T")[0],
             month: new Date().toISOString().slice(0, 7)
@@ -163,6 +164,27 @@ export default function ExpensesView() {
                         onChange={(e) => setAmount(e.target.value)}
                         className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 w-full md:w-32 outline-none"
                     />
+
+                    <select
+                        value={paidBy}
+                        onChange={(e) => setPaidBy(e.target.value)}
+                        className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 outline-none"
+                    >
+
+                        <option value="">
+                            Quién pagó
+                        </option>
+
+                        {participants.map(participant => (
+                            <option
+                                key={participant.id}
+                                value={participant.name}
+                            >
+                                {participant.name}
+                            </option>
+                        ))}
+
+                    </select>
 
                     <button
                         className="bg-white text-black font-medium rounded-xl px-6 py-3 hover:bg-zinc-200 cursor-pointer"
