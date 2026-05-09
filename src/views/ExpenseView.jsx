@@ -7,12 +7,17 @@ import dayjs from "dayjs"
 export default function ExpensesView() {
 
     const [monthlyRent, setMonthlyRent] = useState(0)
+    const [isLoading, setIsLoading] = useState(false)
     const [expenses, setExpenses] = useState([])
     const currentMonth = dayjs().format("YYYY-MM")
     const currentMonthExpenses =
-        expenses.filter(
-            expense => expense.month === currentMonth
-        )
+        expenses.filter(expense => {
+
+            const expenseMonth =
+                dayjs(expense.date).format("YYYY-MM")
+
+            return expenseMonth === currentMonth
+        })
     const [participants, setParticipants] = useState([])
     const [currentPayer, setCurrentPayer] = useState("")
     const [paidBy, setPaidBy] = useState("")
@@ -25,6 +30,10 @@ export default function ExpensesView() {
 
             const data = await getExpenses()
             console.log(data)
+            console.log(currentMonth)
+            console.log(
+                data.map(e => e.month)
+            )
             const formattedExpenses = data.map(expense => ({
                 ...expense,
                 amount: Number(expense.amount)
@@ -81,21 +90,34 @@ export default function ExpensesView() {
 
         if (!name || !amount || !paidBy) return
 
-        const newExpense = {
-            id: Date.now().toString(),
-            name,
-            paid_by: paidBy,
-            amount: Number(amount),
-            date: new Date().toISOString().split("T")[0],
-            month: new Date().toISOString().slice(0, 7)
+        setIsLoading(true)
+
+        try {
+
+            const newExpense = {
+                id: Date.now().toString(),
+                name,
+                paid_by: paidBy,
+                amount: Number(amount),
+                date: new Date().toISOString().split("T")[0]
+            }
+
+            await createExpense(newExpense)
+
+            setExpenses([newExpense, ...expenses])
+
+            setName("")
+            setAmount("")
+            setPaidBy("")
+
+        } catch (error) {
+
+            console.error(error)
+
+        } finally {
+
+            setIsLoading(false)
         }
-
-        await createExpense(newExpense)
-
-        setExpenses([newExpense, ...expenses])
-
-        setName("")
-        setAmount("")
     }
 
     async function deleteExpense(id) {
@@ -187,9 +209,25 @@ export default function ExpensesView() {
                     </select>
 
                     <button
-                        className="bg-white text-black font-medium rounded-xl px-6 py-3 hover:bg-zinc-200 cursor-pointer"
+                        disabled={isLoading}
+                        className="
+        bg-white
+        text-black
+        font-medium
+        rounded-xl
+        px-6
+        py-3
+        hover:bg-zinc-200
+        cursor-pointer
+        disabled:opacity-50
+        disabled:cursor-not-allowed
+    "
                     >
-                        Añadir
+
+                        {isLoading
+                            ? "Añadiendo..."
+                            : "Añadir"}
+
                     </button>
 
                 </form>
