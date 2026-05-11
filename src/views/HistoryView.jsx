@@ -14,6 +14,7 @@ export default function HistoryView() {
 
   const [expenses, setExpenses] = useState([])
   const [participants, setParticipants] = useState([])
+  const [loading, setLoading] = useState(true)
 
   const [selectedMonth, setSelectedMonth] = useState(
     dayjs().format('YYYY-MM')
@@ -25,40 +26,59 @@ export default function HistoryView() {
 
     async function loadData() {
 
-      const expensesData = await getExpenses()
+      setLoading(true)
 
-      const formattedExpenses = expensesData.map(expense => ({
-        ...expense,
-        amount: Number(expense.amount)
-      }))
+      const [
+        expensesData,
+        participantsData,
+        config
+      ] = await Promise.all([
+        getExpenses(),
+        getParticipants(),
+        getConfig()
+      ])
+
+      const formattedExpenses =
+        expensesData.map(expense => ({
+          ...expense,
+          amount: Number(expense.amount)
+        }))
 
       setExpenses(formattedExpenses)
 
-      const participantsData = await getParticipants()
-
-      const activeParticipants = participantsData
-        .filter(p => p.active === 'TRUE')
-        .sort((a, b) => Number(a.order) - Number(b.order))
+      const activeParticipants =
+        participantsData
+          .filter(p => p.active)
+          .sort(
+            (a, b) =>
+              Number(a.order) - Number(b.order)
+          )
 
       setParticipants(activeParticipants)
 
-      const config = await getConfig()
-
-      const rotationStart = config.find(
-        item => item.key === 'rotation_start'
-      )?.value
+      const rotationStart =
+        config.find(
+          item =>
+            item.key === "rotation_start"
+        )?.value
 
       const startDate = dayjs(rotationStart)
 
-      const currentDate = dayjs(selectedMonth)
+      const currentDate =
+        dayjs(selectedMonth)
 
-      const monthsPassed = currentDate.diff(startDate, 'month')
+      const monthsPassed =
+        currentDate.diff(startDate, "month")
 
-      const payer = activeParticipants[
-        monthsPassed % activeParticipants.length
-      ]
+      const payer =
+        activeParticipants[
+        monthsPassed %
+        activeParticipants.length
+        ]
 
-      setCurrentPayer(payer?.name || '')
+      setCurrentPayer(payer?.name || "")
+
+      setLoading(false)
     }
 
     loadData()
@@ -76,6 +96,26 @@ export default function HistoryView() {
       return acc + expense.amount
     }, 0)
   }, [currentMonthExpenses])
+
+  if (loading) {
+
+    return (
+
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center text-white">
+
+        <div className="flex flex-col items-center gap-4">
+
+          <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin" />
+
+          <p className="text-zinc-400">
+            Cargando la euca...
+          </p>
+
+        </div>
+
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100">

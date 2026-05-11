@@ -9,6 +9,9 @@ export default function ExpensesView() {
     const [monthlyRent, setMonthlyRent] = useState(0)
     const [isLoading, setIsLoading] = useState(false)
     const [expenses, setExpenses] = useState([])
+    const PARTICIPANTS_COUNT = 17
+    const [showSummary, setShowSummary] = useState(false)
+    const [loading, setLoading] = useState(true)
     const currentMonth = dayjs().format("YYYY-MM")
     const currentMonthExpenses =
         expenses.filter(expense => {
@@ -25,33 +28,33 @@ export default function ExpensesView() {
     const [amount, setAmount] = useState("")
 
     useEffect(() => {
-
         async function loadExpenses() {
+            setLoading(true)
 
-            const data = await getExpenses()
-            console.log(data)
-            console.log(currentMonth)
-            console.log(
-                data.map(e => e.month)
-            )
-            const formattedExpenses = data.map(expense => ({
-                ...expense,
-                amount: Number(expense.amount)
-            }))
+            const [
+                expensesData,
+                participantsData,
+                config
+            ] = await Promise.all([
+                getExpenses(),
+                getParticipants(),
+                getConfig()
+            ])
+
+            const formattedExpenses =
+                expensesData.map(expense => ({
+                    ...expense,
+                    amount: Number(expense.amount)
+                }))
 
             setExpenses(formattedExpenses)
 
-            const participantsData =
-                await getParticipants()
-
             const activeParticipants =
                 participantsData.filter(
-                    participant => participant.active === "TRUE"
+                    participant => participant.active
                 )
 
             setParticipants(activeParticipants)
-
-            const config = await getConfig()
 
             const rent =
                 config.find(
@@ -78,10 +81,10 @@ export default function ExpensesView() {
                 ]
 
             setCurrentPayer(payer?.name || "")
+            setLoading(false)
         }
 
         loadExpenses()
-
     }, [])
 
     async function addExpense(e) {
@@ -104,7 +107,7 @@ export default function ExpensesView() {
 
             await createExpense(newExpense)
 
-            setExpenses([newExpense, ...expenses])
+            setExpenses(prev => [newExpense, ...prev])
 
             setName("")
             setAmount("")
@@ -124,8 +127,8 @@ export default function ExpensesView() {
 
         await removeExpense(id)
 
-        setExpenses(
-            expenses.filter(expense => expense.id !== id)
+        setExpenses(prev =>
+            prev.filter(expense => expense.id !== id)
         )
     }
 
@@ -136,7 +139,27 @@ export default function ExpensesView() {
     }, [currentMonthExpenses])
 
     const total = monthlyRent + extraExpenses
+    const pricePerPerson = total / PARTICIPANTS_COUNT
 
+    if (loading) {
+
+        return (
+
+            <div className="min-h-screen bg-zinc-950 flex items-center justify-center text-white">
+
+                <div className="flex flex-col items-center gap-4">
+
+                    <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin" />
+
+                    <p className="text-zinc-400">
+                        Cargando la euca...
+                    </p>
+
+                </div>
+
+            </div>
+        )
+    }
     return (
         <div className="min-h-screen bg-zinc-950 text-zinc-100">
 
@@ -156,14 +179,41 @@ export default function ExpensesView() {
 
                 </div>
 
-                <div className="mb-8">
-                    <p className="text-zinc-400 mb-2">
-                        Total gastado este mes
-                    </p>
+                <div className="
+    mb-8
+    flex
+    items-end
+    justify-between
+    gap-4
+">
 
-                    <h1 className="text-5xl font-bold">
-                        {total}€
-                    </h1>
+                    <div>
+
+                        <p className="text-zinc-400 mb-2">
+                            Total gastado este mes
+                        </p>
+
+                        <h1 className="text-5xl font-bold">
+                            {total}€
+                        </h1>
+
+                    </div>
+
+                    <button
+                        onClick={() => setShowSummary(true)}
+                        className="
+                            bg-white
+                            text-black
+                            px-6
+                            py-3
+                            rounded-xl
+                            font-medium
+                            hover:bg-zinc-200
+                            cursor-pointer
+                            whitespace-nowrap">
+                        Finalizar mes
+                    </button>
+
                 </div>
 
                 <form
@@ -211,17 +261,17 @@ export default function ExpensesView() {
                     <button
                         disabled={isLoading}
                         className="
-        bg-white
-        text-black
-        font-medium
-        rounded-xl
-        px-6
-        py-3
-        hover:bg-zinc-200
-        cursor-pointer
-        disabled:opacity-50
-        disabled:cursor-not-allowed
-    "
+                            bg-white
+                            text-black
+                            font-medium
+                            rounded-xl
+                            px-6
+                            py-3
+                            hover:bg-zinc-200
+                            cursor-pointer
+                            disabled:opacity-50
+                            disabled:cursor-not-allowed
+                        "
                     >
 
                         {isLoading
@@ -245,7 +295,96 @@ export default function ExpensesView() {
                 </div>
 
             </main>
+            {showSummary && (
 
+                <div className="
+                    fixed
+                    inset-0
+                    bg-black/70
+                    flex
+                    items-center
+                    justify-center
+                    p-4
+                    z-50
+                ">
+
+                    <div className="
+                        bg-zinc-900
+                        border
+                        border-zinc-800
+                        rounded-3xl
+                        p-8
+                        max-w-md
+                        w-full
+                    ">
+
+                        <h2 className="text-3xl font-bold mb-6">
+                            Resumen del mes
+                        </h2>
+
+                        <div className="space-y-4">
+
+                            <div className="flex justify-between">
+                                <span className="text-zinc-400">
+                                    Total gastado
+                                </span>
+
+                                <span className="font-medium">
+                                    {total.toFixed(2)}€
+                                </span>
+                            </div>
+
+                            <div className="flex justify-between">
+                                <span className="text-zinc-400">
+                                    Participantes
+                                </span>
+
+                                <span className="font-medium">
+                                    {PARTICIPANTS_COUNT}
+                                </span>
+                            </div>
+
+                            <div className="
+                                flex
+                                justify-between
+                                text-xl
+                                pt-4
+                                border-t
+                                border-zinc-800
+                            ">
+                                <span>
+                                    Cada uno paga
+                                </span>
+
+                                <span className="font-bold">
+                                    {pricePerPerson.toFixed(2)}€
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <button
+                            onClick={() =>
+                                setShowSummary(false)
+                            }
+                            className="
+                                mt-8
+                                w-full
+                                bg-white
+                                text-black
+                                py-3
+                                rounded-xl
+                                font-medium
+                                hover:bg-zinc-200
+                                cursor-pointer
+                            ">
+                            Cerrar
+                        </button>
+
+                    </div>
+
+                </div>
+            )}
         </div>
     )
 }
