@@ -13,6 +13,8 @@ import {
 export default function HistoryView() {
 
   const [expenses, setExpenses] = useState([])
+  const MONTHLY_RENT = 300
+  const PARTICIPANTS_COUNT = 17
   const [participants, setParticipants] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -86,16 +88,34 @@ export default function HistoryView() {
   }, [selectedMonth])
 
   const currentMonthExpenses = useMemo(() => {
-    return expenses.filter(
-      expense => expense.month === selectedMonth
-    )
+
+    return expenses.filter(expense => {
+
+      const expenseMonth =
+        dayjs(expense.date)
+          .format("YYYY-MM")
+
+      return expenseMonth === selectedMonth
+    })
+
   }, [expenses, selectedMonth])
 
-  const total = useMemo(() => {
-    return currentMonthExpenses.reduce((acc, expense) => {
-      return acc + expense.amount
-    }, 0)
+  const extraExpenses = useMemo(() => {
+
+    return currentMonthExpenses.reduce(
+      (acc, expense) => {
+        return acc + expense.amount
+      },
+      0
+    )
+
   }, [currentMonthExpenses])
+
+  const total =
+    MONTHLY_RENT + extraExpenses
+
+  const pricePerPerson =
+    total / PARTICIPANTS_COUNT
 
   if (loading) {
 
@@ -108,7 +128,7 @@ export default function HistoryView() {
           <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin" />
 
           <p className="text-zinc-400">
-            Cargando la euca...
+            Cargando histórico...
           </p>
 
         </div>
@@ -145,29 +165,59 @@ export default function HistoryView() {
 
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 mb-8">
+        <div className="
+  bg-zinc-900
+  border
+  border-zinc-800
+  rounded-2xl
+  p-6
+  mb-8
+">
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+          <div className="
+    flex
+    flex-col
+    md:flex-row
+    md:items-center
+    md:justify-between
+    gap-6
+  ">
 
-            <p className="text-zinc-400 mb-2 text-sm">
-              Ese mes pagaba
-            </p>
+            <div>
 
-            <h2 className="text-4xl font-bold">
-              {currentPayer}
-            </h2>
+              <p className="text-zinc-400 mb-1">
+                Ese mes pagaba
+              </p>
 
-          </div>
+              <h2 className="text-3xl font-bold">
+                {currentPayer}
+              </h2>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+            </div>
 
-            <p className="text-zinc-400 mb-2 text-sm">
-              Gastos extra
-            </p>
+            <div>
 
-            <h2 className="text-4xl font-bold">
-              {total}€
-            </h2>
+              <p className="text-zinc-400 mb-1">
+                Total del mes
+              </p>
+
+              <h2 className="text-3xl font-bold">
+                {total.toFixed(2)}€
+              </h2>
+
+            </div>
+
+            <div>
+
+              <p className="text-zinc-400 mb-1">
+                Cada uno pagaba
+              </p>
+
+              <h2 className="text-3xl font-bold">
+                {pricePerPerson.toFixed(2)}€
+              </h2>
+
+            </div>
 
           </div>
 

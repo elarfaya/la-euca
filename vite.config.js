@@ -4,10 +4,15 @@ import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+
   base: '/la-euca/',
+
   plugins: [
+
     react(),
+
     VitePWA({
+
       registerType: 'autoUpdate',
 
       manifest: {
@@ -25,20 +30,18 @@ export default defineConfig({
 
         display: 'standalone',
 
+        start_url: '/la-euca/',
+
         icons: [
           {
-            src: '/icon-192.png',
+            src: '/la-euca/icon-192.png',
             sizes: '192x192',
-            type: 'image/png'
-          },
-          {
-            src: '/icon-192.png',
-            sizes: '512x512',
             type: 'image/png'
           }
         ]
       }
     }),
+
     tailwindcss()
   ]
 })

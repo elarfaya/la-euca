@@ -152,7 +152,7 @@ export default function ExpensesView() {
                     <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin" />
 
                     <p className="text-zinc-400">
-                        Cargando la euca...
+                        Cargando pagina principal...
                     </p>
 
                 </div>
@@ -249,7 +249,7 @@ export default function ExpensesView() {
 
                         {participants.map(participant => (
                             <option
-                                key={participant.id}
+                                key={participant.order}
                                 value={participant.name}
                             >
                                 {participant.name}
