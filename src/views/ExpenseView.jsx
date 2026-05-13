@@ -165,22 +165,22 @@ export default function ExpensesView() {
 
             <Navbar />
 
-            <main className="max-w-3xl mx-auto px-4 py-10">
+            <main className="max-w-3xl mx-auto px-4 py-2">
 
-                <div className="mb-8 bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+                <div className="mb-4 bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
 
                     <p className="text-zinc-400 mb-2">
                         Este mes paga
                     </p>
 
-                    <h2 className="text-4xl font-bold">
+                    <h2 className="text-2xl font-bold">
                         {currentPayer}
                     </h2>
 
                 </div>
 
                 <div className="
-    mb-8
+    mb-4
     flex
     items-end
     justify-between
@@ -193,7 +193,7 @@ export default function ExpensesView() {
                             Total gastado este mes
                         </p>
 
-                        <h1 className="text-5xl font-bold">
+                        <h1 className="text-3xl font-bold">
                             {total}€
                         </h1>
 
@@ -222,7 +222,7 @@ export default function ExpensesView() {
     border-zinc-800
     rounded-2xl
     p-6
-    mb-8
+    mb-4
 ">
 
                     <div className="mb-6">
