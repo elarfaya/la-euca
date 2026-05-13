@@ -216,72 +216,132 @@ export default function ExpensesView() {
 
                 </div>
 
-                <form
-                    onSubmit={addExpense}
-                    className="flex flex-col md:flex-row gap-4 mb-8"
-                >
+                <div className="
+    bg-zinc-900
+    border
+    border-zinc-800
+    rounded-2xl
+    p-6
+    mb-8
+">
 
-                    <input
-                        type="text"
-                        placeholder="Concepto"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex-1 outline-none"
-                    />
+                    <div className="mb-6">
 
-                    <input
-                        type="number"
-                        placeholder="€"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 w-full md:w-32 outline-none"
-                    />
+                        <h2 className="text-2xl font-bold mb-2">
+                            Añadir gasto
+                        </h2>
 
-                    <select
-                        value={paidBy}
-                        onChange={(e) => setPaidBy(e.target.value)}
-                        className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 outline-none"
-                    >
+                        <p className="text-zinc-400">
+                            Registra compras y gastos del mes
+                        </p>
 
-                        <option value="">
-                            Quién pagó
-                        </option>
+                    </div>
 
-                        {participants.map(participant => (
-                            <option
-                                key={participant.order}
-                                value={participant.name}
-                            >
-                                {participant.name}
-                            </option>
-                        ))}
-
-                    </select>
-
-                    <button
-                        disabled={isLoading}
+                    <form
+                        onSubmit={addExpense}
                         className="
-                            bg-white
-                            text-black
-                            font-medium
-                            rounded-xl
-                            px-6
-                            py-3
-                            hover:bg-zinc-200
-                            cursor-pointer
-                            disabled:opacity-50
-                            disabled:cursor-not-allowed
-                        "
+            flex
+            flex-col
+            md:flex-row
+            gap-4
+        "
                     >
 
-                        {isLoading
-                            ? "Añadiendo..."
-                            : "Añadir"}
+                        <input
+                            type="text"
+                            placeholder="Concepto"
+                            value={name}
+                            onChange={(e) =>
+                                setName(e.target.value)
+                            }
+                            className="
+                bg-zinc-950
+                border
+                border-zinc-800
+                rounded-xl
+                px-4
+                py-3
+                flex-1
+                outline-none
+            "
+                        />
 
-                    </button>
+                        <input
+                            type="number"
+                            placeholder="€"
+                            value={amount}
+                            onChange={(e) =>
+                                setAmount(e.target.value)
+                            }
+                            className="
+                bg-zinc-950
+                border
+                border-zinc-800
+                rounded-xl
+                px-4
+                py-3
+                w-full
+                md:w-32
+                outline-none
+            "
+                        />
 
-                </form>
+                        <select
+                            value={paidBy}
+                            onChange={(e) =>
+                                setPaidBy(e.target.value)
+                            }
+                            className="
+                bg-zinc-950
+                border
+                border-zinc-800
+                rounded-xl
+                px-4
+                py-3
+                outline-none
+            "
+                        >
 
+                            <option value="">
+                                Quién pagó
+                            </option>
+
+                            {participants.map(participant => (
+                                <option
+                                    key={participant.order}
+                                    value={participant.name}
+                                >
+                                    {participant.name}
+                                </option>
+                            ))}
+
+                        </select>
+
+                        <button
+                            disabled={isLoading}
+                            className="
+                bg-white
+                text-black
+                font-medium
+                rounded-xl
+                px-6
+                py-3
+                hover:bg-zinc-200
+                cursor-pointer
+                disabled:opacity-50
+                disabled:cursor-not-allowed
+            "
+                        >
+
+                            {isLoading
+                                ? "Añadiendo..."
+                                : "Añadir"}
+
+                        </button>
+
+                    </form>
+
+                </div>
                 <div className="space-y-4">
 
                     {currentMonthExpenses.map(expense => (
