@@ -165,7 +165,7 @@ export default function ExpensesView() {
 
             <Navbar />
 
-            <main className="max-w-3xl mx-auto px-4 py-2">
+            <main className="max-w-3xl mx-auto px-4 pt-2 pb-8">
 
                 <div className="mb-4 bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
 
