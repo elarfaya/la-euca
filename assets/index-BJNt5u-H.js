@@ -27,18 +27,57 @@ Please change the parent <Route path="${e}"> to <Route path="${e===`/`?`*`:`${e}
                             font-medium\r
                             hover:bg-zinc-200\r
                             cursor-pointer\r
-                            whitespace-nowrap`,children:`Finalizar mes`})]}),(0,M.jsxs)(`form`,{onSubmit:C,className:`flex flex-col md:flex-row gap-4 mb-8`,children:[(0,M.jsx)(`input`,{type:`text`,placeholder:`Concepto`,value:v,onChange:e=>y(e.target.value),className:`bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex-1 outline-none`}),(0,M.jsx)(`input`,{type:`number`,placeholder:`€`,value:b,onChange:e=>S(e.target.value),className:`bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 w-full md:w-32 outline-none`}),(0,M.jsxs)(`select`,{value:g,onChange:e=>_(e.target.value),className:`bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 outline-none`,children:[(0,M.jsx)(`option`,{value:``,children:`Quién pagó`}),f.map(e=>(0,M.jsx)(`option`,{value:e.name,children:e.name},e.order))]}),(0,M.jsx)(`button`,{disabled:n,className:`\r
-                            bg-white\r
-                            text-black\r
-                            font-medium\r
-                            rounded-xl\r
-                            px-6\r
-                            py-3\r
-                            hover:bg-zinc-200\r
-                            cursor-pointer\r
-                            disabled:opacity-50\r
-                            disabled:cursor-not-allowed\r
-                        `,children:n?`Añadiendo...`:`Añadir`})]}),(0,M.jsx)(`div`,{className:`space-y-4`,children:d.map(e=>(0,M.jsx)(Xn,{expense:e,onDelete:w},e.id))})]}),o&&(0,M.jsx)(`div`,{className:`\r
+                            whitespace-nowrap`,children:`Finalizar mes`})]}),(0,M.jsxs)(`div`,{className:`\r
+    bg-zinc-900\r
+    border\r
+    border-zinc-800\r
+    rounded-2xl\r
+    p-6\r
+    mb-8\r
+`,children:[(0,M.jsxs)(`div`,{className:`mb-6`,children:[(0,M.jsx)(`h2`,{className:`text-2xl font-bold mb-2`,children:`Añadir gasto`}),(0,M.jsx)(`p`,{className:`text-zinc-400`,children:`Registra compras y gastos del mes`})]}),(0,M.jsxs)(`form`,{onSubmit:C,className:`\r
+            flex\r
+            flex-col\r
+            md:flex-row\r
+            gap-4\r
+        `,children:[(0,M.jsx)(`input`,{type:`text`,placeholder:`Concepto`,value:v,onChange:e=>y(e.target.value),className:`\r
+                bg-zinc-950\r
+                border\r
+                border-zinc-800\r
+                rounded-xl\r
+                px-4\r
+                py-3\r
+                flex-1\r
+                outline-none\r
+            `}),(0,M.jsx)(`input`,{type:`number`,placeholder:`€`,value:b,onChange:e=>S(e.target.value),className:`\r
+                bg-zinc-950\r
+                border\r
+                border-zinc-800\r
+                rounded-xl\r
+                px-4\r
+                py-3\r
+                w-full\r
+                md:w-32\r
+                outline-none\r
+            `}),(0,M.jsxs)(`select`,{value:g,onChange:e=>_(e.target.value),className:`\r
+                bg-zinc-950\r
+                border\r
+                border-zinc-800\r
+                rounded-xl\r
+                px-4\r
+                py-3\r
+                outline-none\r
+            `,children:[(0,M.jsx)(`option`,{value:``,children:`Quién pagó`}),f.map(e=>(0,M.jsx)(`option`,{value:e.name,children:e.name},e.order))]}),(0,M.jsx)(`button`,{disabled:n,className:`\r
+                bg-white\r
+                text-black\r
+                font-medium\r
+                rounded-xl\r
+                px-6\r
+                py-3\r
+                hover:bg-zinc-200\r
+                cursor-pointer\r
+                disabled:opacity-50\r
+                disabled:cursor-not-allowed\r
+            `,children:n?`Añadiendo...`:`Añadir`})]})]}),(0,M.jsx)(`div`,{className:`space-y-4`,children:d.map(e=>(0,M.jsx)(Xn,{expense:e,onDelete:w},e.id))})]}),o&&(0,M.jsx)(`div`,{className:`\r
                     fixed\r
                     inset-0\r
                     bg-black/70\r
