@@ -84,3 +84,44 @@ async function fetchWithFallback(
 
     return response
 }
+
+export async function getCycles() {
+
+  const response = await fetch(
+    `${READ_URL}?sheet=cycles`
+  )
+
+  return await response.json()
+}
+
+export async function createCycle(cycle) {
+
+  await fetch(
+    `${PRIMARY_WRITE_URL}?sheet=cycles`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        data: cycle
+      })
+    }
+  )
+}
+
+export async function updateCycle(id, cycle) {
+
+  await fetch(
+    `${PRIMARY_WRITE_URL}/id/${id}?sheet=cycles`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        data: cycle
+      })
+    }
+  )
+}

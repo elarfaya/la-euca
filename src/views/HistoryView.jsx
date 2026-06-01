@@ -161,6 +161,7 @@ export default function HistoryView() {
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
             className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 outline-none"
+            color='white'
           />
 
         </div>

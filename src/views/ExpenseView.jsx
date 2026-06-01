@@ -1,7 +1,16 @@
 import { useEffect, useMemo, useState } from "react"
 import Navbar from "../components/Navbar"
 import ExpenseItem from "../components/ExpenseItem"
-import { getExpenses, createExpense, removeExpense, getConfig, getParticipants } from "../services/api"
+import {
+    getExpenses,
+    createExpense,
+    removeExpense,
+    getConfig,
+    getParticipants,
+    getCycles,
+    createCycle,
+    updateCycle
+} from "../services/api"
 import dayjs from "dayjs"
 
 export default function ExpensesView() {
@@ -12,19 +21,26 @@ export default function ExpensesView() {
     const PARTICIPANTS_COUNT = 17
     const [showSummary, setShowSummary] = useState(false)
     const [loading, setLoading] = useState(true)
-    const currentMonth = dayjs().format("YYYY-MM")
-    const currentMonthExpenses =
-        expenses.filter(expense => {
+    const [currentCycle, setCurrentCycle] = useState(null)
+    const currentCycleExpenses = useMemo(() => {
 
-            const expenseMonth =
-                dayjs(expense.date).format("YYYY-MM")
+        if (!currentCycle) return []
 
-            return expenseMonth === currentMonth
+        return expenses.filter(expense => {
+
+            return dayjs(expense.date)
+                .isAfter(
+                    dayjs(currentCycle.start_date).subtract(1, "day")
+                )
+
         })
+
+    }, [expenses, currentCycle])
     const [participants, setParticipants] = useState([])
     const [currentPayer, setCurrentPayer] = useState("")
     const [paidBy, setPaidBy] = useState("")
     const [name, setName] = useState("")
+    const [isFinishing, setIsFinishing] = useState(false)
     const [amount, setAmount] = useState("")
 
     useEffect(() => {
@@ -34,12 +50,22 @@ export default function ExpensesView() {
             const [
                 expensesData,
                 participantsData,
-                config
+                config,
+                cyclesData
             ] = await Promise.all([
                 getExpenses(),
                 getParticipants(),
-                getConfig()
+                getConfig(),
+                getCycles()
             ])
+
+            const activeCycle =
+                cyclesData.find(
+                    cycle =>
+                        String(cycle.closed).toLowerCase() !== "true"
+                )
+
+            setCurrentCycle(activeCycle)
 
             const formattedExpenses =
                 expensesData.map(expense => ({
@@ -63,24 +89,12 @@ export default function ExpensesView() {
 
             setMonthlyRent(Number(rent))
 
-            const rotationStart =
-                config.find(
-                    item => item.key === "rotation_start"
-                )?.value
-
-            const startDate = dayjs(rotationStart)
-
             const currentDate = dayjs()
 
-            const monthsPassed =
-                currentDate.diff(startDate, "month")
+            setCurrentPayer(
+                activeCycle?.payer || ""
+            )
 
-            const payer =
-                activeParticipants[
-                monthsPassed % activeParticipants.length
-                ]
-
-            setCurrentPayer(payer?.name || "")
             setLoading(false)
         }
 
@@ -132,11 +146,56 @@ export default function ExpensesView() {
         )
     }
 
+    async function finishCycle() {
+        setIsFinishing(true)
+
+        try {
+            if (!currentCycle) return
+
+            const currentIndex =
+                participants.findIndex(
+                    p => p.name === currentCycle.payer
+                )
+
+            const nextParticipant =
+                participants[
+                (currentIndex + 1) %
+                participants.length
+                ]
+
+            await updateCycle(
+                currentCycle.id,
+                {
+                    end_date: dayjs()
+                        .format("YYYY-MM-DD"),
+                    closed: true
+                }
+            )
+
+            await createCycle({
+                id: Date.now().toString(),
+                payer: nextParticipant.name,
+                start_date: dayjs()
+                    .format("YYYY-MM-DD"),
+                end_date: "",
+                closed: false
+            })
+
+            window.location.reload()
+        }
+        finally {
+            setIsFinishing(false)
+        }
+    }
+
     const extraExpenses = useMemo(() => {
-        return currentMonthExpenses.reduce((acc, expense) => {
-            return acc + expense.amount
-        }, 0)
-    }, [currentMonthExpenses])
+
+        return currentCycleExpenses.reduce(
+            (acc, expense) => acc + expense.amount,
+            0
+        )
+
+    }, [currentCycleExpenses])
 
     const total = monthlyRent + extraExpenses
     const pricePerPerson = total / PARTICIPANTS_COUNT
@@ -344,7 +403,7 @@ export default function ExpensesView() {
                 </div>
                 <div className="space-y-4">
 
-                    {currentMonthExpenses.map(expense => (
+                    {currentCycleExpenses.map(expense => (
                         <ExpenseItem
                             key={expense.id}
                             expense={expense}
@@ -423,24 +482,41 @@ export default function ExpensesView() {
 
                         </div>
 
-                        <button
-                            onClick={() =>
-                                setShowSummary(false)
-                            }
-                            className="
-                                mt-8
-                                w-full
-                                bg-white
-                                text-black
-                                py-3
-                                rounded-xl
-                                font-medium
-                                hover:bg-zinc-200
-                                cursor-pointer
-                            ">
-                            Cerrar
-                        </button>
+                        <div className="flex gap-3 mt-8">
 
+                            <button
+                                onClick={() => setShowSummary(false)}
+                                className="
+                                flex-1
+                                bg-zinc-800
+                                hover:bg-zinc-700
+                                rounded-xl
+                                py-3
+                                font-medium
+                                cursor-pointer
+                                "
+                            >
+                                Cerrar
+                            </button>
+
+                            <button
+                                onClick={finishCycle}
+                                disabled={isFinishing}
+                                className="
+                                flex-1
+                                bg-red-600
+                                hover:bg-red-500
+                                rounded-xl
+                                py-3
+                                font-medium
+                                text-white
+                                cursor-pointer
+                                "
+                            >
+                                Finalizar ciclo
+                            </button>
+
+                        </div>
                     </div>
 
                 </div>
