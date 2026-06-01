@@ -513,7 +513,7 @@ export default function ExpensesView() {
                                 cursor-pointer
                                 "
                             >
-                                Finalizar ciclo
+                                Finalizar
                             </button>
 
                         </div>
