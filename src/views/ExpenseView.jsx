@@ -18,7 +18,6 @@ export default function ExpensesView() {
     const [monthlyRent, setMonthlyRent] = useState(0)
     const [isLoading, setIsLoading] = useState(false)
     const [expenses, setExpenses] = useState([])
-    const PARTICIPANTS_COUNT = 17
     const [showSummary, setShowSummary] = useState(false)
     const [loading, setLoading] = useState(true)
     const [currentCycle, setCurrentCycle] = useState(null)
@@ -198,7 +197,10 @@ export default function ExpensesView() {
     }, [currentCycleExpenses])
 
     const total = monthlyRent + extraExpenses
-    const pricePerPerson = total / PARTICIPANTS_COUNT
+    const activeParticipantsCount = participants.length
+    const pricePerPerson = activeParticipantsCount > 0
+        ? total / activeParticipantsCount
+        : 0
 
     if (loading) {
 
@@ -459,7 +461,7 @@ export default function ExpensesView() {
                                 </span>
 
                                 <span className="font-medium">
-                                    {PARTICIPANTS_COUNT}
+                                    {activeParticipantsCount}
                                 </span>
                             </div>
 
