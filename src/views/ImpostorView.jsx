@@ -126,22 +126,46 @@ export default function ImpostorView() {
         )}
 
         {screen === 'deal' && current && (
-          <section className="rounded-3xl border border-zinc-800 bg-zinc-900/70 p-5 sm:p-7 shadow-xl">
-            <div className="flex items-center justify-between mb-5">
-              <span className="text-sm text-zinc-400">Reparto secreto</span>
-              <span className="text-sm font-semibold text-violet-300">Jugador {playerIndex + 1} de {players.length}</span>
+          <section className="mx-auto max-w-md px-1 sm:px-3">
+            <div
+              ref={cardRef}
+              onPointerDown={handlePointerDown}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={() => setDragStart(null)}
+              onClick={() => !revealed && setRevealed(true)}
+              className={`impostor-player-card relative isolate overflow-hidden select-none touch-pan-y min-h-[390px] sm:min-h-[430px] rounded-[2rem] border flex flex-col items-center justify-center text-center px-7 py-10 cursor-pointer shadow-2xl transition-colors duration-300 ${revealed ? `reveal-flip ${current.impostor ? 'bg-gradient-to-br from-rose-950 via-zinc-950 to-zinc-900 border-rose-800/70' : 'bg-gradient-to-br from-emerald-950 via-zinc-950 to-zinc-900 border-emerald-800/70'}` : 'bg-gradient-to-br from-violet-950 via-zinc-900 to-zinc-950 border-violet-400/20 hover:border-violet-300/40'}`}
+            >
+              {!revealed ? (
+                <>
+                  <div className="absolute -top-20 -right-16 h-56 w-56 rounded-full bg-violet-500/10 blur-3xl pointer-events-none" />
+                  <div className="absolute -bottom-24 -left-16 h-56 w-56 rounded-full bg-fuchsia-500/10 blur-3xl pointer-events-none" />
+                  <div className="relative z-10 flex flex-col items-center">
+                    <div className="mb-7 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] text-3xl shadow-lg shadow-black/20">🎭</div>
+                    <p className="text-sm font-medium tracking-wide text-violet-200/80">Es el turno de</p>
+                    <h2 className="mt-2 max-w-full break-words text-4xl sm:text-5xl font-black tracking-tight text-white">{current.player}</h2>
+                    <div className="my-8 h-px w-16 bg-gradient-to-r from-transparent via-violet-300/50 to-transparent" />
+                    <p className="text-lg font-semibold text-white">Desliza para descubrir</p>
+                    <p className="mt-2 text-sm text-zinc-400">Tu papel secreto</p>
+                    <div className="mt-7 flex items-center gap-2 text-violet-200/80 animate-pulse" aria-hidden="true">
+                      <span className="text-xl">←</span><span className="text-xs uppercase tracking-[0.25em]">Desliza</span><span className="text-xl">→</span>
+                    </div>
+                  </div>
+                </>
+              ) : current.impostor ? (
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="text-5xl mb-5">🕵️</div>
+                  <div className="text-3xl sm:text-4xl font-black tracking-wide text-rose-200">IMPOSTOR</div>
+                  {hintsEnabled && <div className="mt-7 rounded-2xl border border-rose-800/60 bg-rose-900/30 px-6 py-4"><p className="text-xs text-rose-300 uppercase tracking-[0.2em]">Tu pista</p><p className="text-2xl font-semibold mt-2 text-rose-100">{round.hint}</p></div>}
+                </div>
+              ) : (
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="text-5xl mb-5">🎭</div>
+                  <div className="text-3xl sm:text-4xl font-black text-emerald-100 break-words">{round.word}</div>
+                </div>
+              )}
             </div>
-            <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden mb-7"><div className="h-full bg-violet-500 transition-all" style={{ width: `${((playerIndex + 1) / players.length) * 100}%` }} /></div>
-            <div className="text-center mb-6">
-              <p className="text-zinc-400 text-sm">Pásale el móvil a</p>
-              <h2 className="text-3xl font-black mt-1">{current.player}</h2>
-              <p className="text-zinc-500 text-sm mt-2">Asegúrate de que nadie más esté mirando.</p>
-            </div>
-            <div ref={cardRef} onPointerDown={handlePointerDown} onPointerUp={handlePointerUp} onPointerCancel={() => setDragStart(null)} className={`select-none touch-pan-y min-h-56 rounded-3xl border flex flex-col items-center justify-center text-center p-6 transition-all ${revealed ? (current.impostor ? 'bg-rose-950/50 border-rose-800' : 'bg-emerald-950/40 border-emerald-800') : 'bg-zinc-950 border-zinc-700 border-dashed cursor-grab active:cursor-grabbing'}`}>
-              {!revealed ? <><div className="text-4xl mb-4">🔒</div><div className="text-lg font-bold">Tu papel está oculto</div><p className="text-sm text-zinc-500 mt-2">Desliza la tarjeta hacia un lado para descubrirlo</p><button onClick={() => setRevealed(true)} className="mt-5 text-sm text-violet-300 underline underline-offset-4">O pulsa aquí para revelar</button></> : current.impostor ? <><div className="text-4xl mb-3">🕵️</div><div className="text-xs uppercase tracking-[0.25em] font-bold text-rose-300">Tu papel</div><div className="text-3xl font-black text-rose-200 mt-2">IMPOSTOR</div>{hintsEnabled && <div className="mt-5 rounded-xl bg-rose-900/40 border border-rose-800/60 px-5 py-3"><p className="text-xs text-rose-300 uppercase tracking-widest">Tu pista</p><p className="text-xl font-semibold mt-1">{round.hint}</p></div>}</> : <><div className="text-4xl mb-3">🎭</div><div className="text-xs uppercase tracking-[0.25em] font-bold text-emerald-300">La palabra secreta</div><div className="text-3xl sm:text-4xl font-black text-emerald-100 mt-3 break-words">{round.word}</div></>}
-            </div>
-            <p className="text-center text-xs text-zinc-500 mt-4">{revealed ? 'Memoriza tu papel y no lo enseñes a nadie.' : 'Solo el jugador indicado debe descubrir su papel.'}</p>
-            <button onClick={nextPlayer} disabled={!revealed} className="w-full mt-6 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:bg-zinc-700 disabled:text-zinc-500 px-5 py-3.5 font-bold transition">{playerIndex === players.length - 1 ? 'Terminar reparto' : 'Siguiente jugador'} <span aria-hidden="true">→</span></button>
+            {revealed && <p className="text-center text-xs text-zinc-500 mt-4">Memoriza tu papel y no lo enseñes a nadie.</p>}
+            <button onClick={nextPlayer} disabled={!revealed} className="w-full mt-5 rounded-2xl bg-violet-600 hover:bg-violet-500 disabled:bg-zinc-800 disabled:text-zinc-600 px-5 py-4 font-bold text-base shadow-lg shadow-violet-950/30 transition">{playerIndex === players.length - 1 ? 'Terminar reparto' : 'Siguiente jugador'} <span aria-hidden="true">→</span></button>
           </section>
         )}
 
